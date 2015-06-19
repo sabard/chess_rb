@@ -1,27 +1,31 @@
 class ChessRB::Move
   FILE_TO_NUM = [nil, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-  attr_reader :to, :from, :promotion, :square, :san
+  attr_reader :to, :from, :promotion, :square, :san, :board
 
   def initialize(move, pos, promotion = nil)
-    if (squares = move.split('-')).length == 2
+    if move.split('-').length == 2
       @square = move
-      @san = ChessRB::Notation.square_to_algebraic(move)
     else
       @san = move
-      @square = ChessRB::Notation.algebraic_to_square(move)
     end
 
-    @from = squares[0]
-    @to = squares[1]
-
     if pos.is_a? String
-      @board = Board.new pos
+      @board = ChessRB::Position.new pos
     else
       @board = pos
     end
 
     @promotion = promotion
+
+    @square = ChessRB::Notation.algebraic_to_square(self) if @square.nil?
+
+    squares = @square.split('-')
+    @from = squares[0]
+    @to = squares[1]
+
+    @san = ChessRB::Notation.square_to_algebraic(self) if @san.nil?
+
     @valid = valid?
   end
 

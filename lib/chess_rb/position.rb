@@ -1,7 +1,7 @@
 class ChessRB::Position
   attr_accessor :fen
 
-  def intialize(fen)
+  def initialize(fen)
     @fen = fen
     @fen_components = fen.split(' ')
     @board = fen_to_board(fen)
@@ -14,8 +14,8 @@ class ChessRB::Position
 
   # Returns the piece code on the given square
   def piece_on(square)
-    ChessRB::Move.file(square)
-    ChessRB::Move.rank(square)
+    file = ChessRB::Move.file(square)
+    rank = ChessRB::Move.rank(square)
     return @board[8 - rank][file - 1]
   end
 
@@ -62,7 +62,7 @@ class ChessRB::Position
           if c.upcase == 'B'
             c = i + j % 2 == 0 ? 'DB' : 'LB'
           end
-          board[i][j] = Board.const_get(color + c.upcase)
+          board[i][j] = ChessRB::Piece.const_get(color + c.upcase)
           j += 1
         end
       end
