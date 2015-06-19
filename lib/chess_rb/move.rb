@@ -3,7 +3,7 @@ class ChessRB::Move
 
   attr_reader :to, :from, :promotion, :square, :san
 
-  def intialize(move, pos, promotion = nil)
+  def initialize(move, pos, promotion = nil)
     if (squares = move.split('-')).length == 2
       @square = move
       @san = ChessRB::Notation.square_to_algebraic(move)
