@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'chess_rb'
-  s.version     = '0.0.0'
-  s.date        = '2014-06-16'
+  s.version     = '0.0.2'
+  s.date        = '2014-06-19'
   s.summary     = "Ruby chess library"
   s.description = "Chess functions written in Ruby"
   s.authors     = ["Sabar Dasgupta"]
