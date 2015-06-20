@@ -1,23 +1,25 @@
 class ChessRB::Piece
+  E = 0
   WP = 1; WN = 2; WLB = 3; WDB = 4; WR = 5; WQ = 6; WK = 7
   BP = 11; BN = 12; BLB = 13; BDB = 14; BR = 15; BQ = 16; BK = 17
 
-  attr_accessor :code
+  attr_reader :code, :desc
 
   def initialize(code)
     @code = code
+    @desc = ChessRB::Piece.constants.select{
+      |v| ChessRB::Piece.const_get(v) == code }[0].to_s
   end
 
   def type
-    self.to_desc[-1, 1]
+    self.desc[-1, 1]
   end
 
-  def to_desc
-    return ChessRB::Piece.constants.select{
-      |v| ChessRB::Piece.const_get(v) == @code }[0].to_s
+  def color
+    self.desc[0]
   end
 
-  def to_s(p, d)
+  def to_s(d)
     case @code
     when WP
       d ? "♟" : "♙"

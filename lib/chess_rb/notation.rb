@@ -1,7 +1,7 @@
 class ChessRB::Notation
   def self.square_to_algebraic(move)
     board = move.board
-    piece = ChessRB::Piece.new(board.piece_on(move.from))
+    piece = board.piece_on(move.from)
     san = ""
 
     raise ArgumentError.new "Invalid move and/or position" if !move.valid? ||
@@ -9,16 +9,17 @@ class ChessRB::Notation
 
 
     if move.queen_castle?
-      san = "O-O-O"
+      return "O-O-O"
     elsif move.king_castle?
-      san = "O-O"
+      return "O-O"
     else
-      if piece.type == 'p'
+      if piece.type == 'P'
         if move.capture?
-          san = file_to_char(move.from_file)
+          san = move.from[0]
         end
       else
         san += piece.type.upcase
+
         # test ambiguities
         # file
         # rank
@@ -34,13 +35,12 @@ class ChessRB::Notation
 
     san += "=#{move.promotion}" if move.promotion
 
-=begin
+    undo_info = board.piece_on(move.to)
     board.make_move(move)
     if (board.check?)
       san += board.mate? ? "#" : "+"
     end
-    board.undo_move(move)
-=end
+    board.undo_move(move, undo_info)
 
     return san
   end
