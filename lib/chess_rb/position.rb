@@ -227,7 +227,6 @@ class ChessRB::Position
       fen += count.to_s if count != 0
     end
 
-    puts fen.to_s
     return fen
   end
 
@@ -244,26 +243,38 @@ class ChessRB::Position
   def update_fen(move, forward)
     if forward
       sym = nil
+      t = @fen_components[1]
       if move.king_castle?
-        sym = @fen_components[1] == 'w' ? 'K' : 'k'
+        sym = t == 'w' ? 'K' : 'k'
         if @fen_components[2].include? sym
           @fen_components[2].sub(sym, '')
         end
       elsif move.queen_castle?
-        sym = @fen_components[1] == 'w' ? 'Q' : 'q'
+        sym = t == 'w' ? 'Q' : 'q'
         @fen_components[2]
       end
-      if sym && @fen_components[2].include? sym
+      if sym && @fen_components[2].include?(sym)
         @fen_components[2].sub(sym, '')
         @fen_components[2] = '-' if @fen_components[2].empty?
       end
 
-      if piece_on(move.to).type == 'P' &&
+      if (pawn_move = piece_on(move.to).type == 'P') &&
         (move.from_rank - move.to_rank).abs == 2
 
-        @fen_components[3]
+        @fen_components[3] = move.san[0]
+        @fen_components[3] += (t == 'w') ? '3' : '6'
       else
         @fen_components[3] = '-'
+      end
+
+      if pawn_move || move.capture?
+        @fen_components[4] = 0
+      else
+        @fen_components[4] = (@fen_components[4].to_i + 1).to_s
+      end
+
+      if t == 'b'
+        @fen_components[5] = (@fen_components[5].to_i + 1).to_s
       end
     else
       # do things for undo_move
