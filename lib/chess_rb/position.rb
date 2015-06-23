@@ -153,14 +153,14 @@ class ChessRB::Position
     move([8 - move.from_rank, move.from_file - 1],
       [8 - move.to_rank, move.to_file - 1])
 
-    update_fen(true)
+    update_fen(move, true)
   end
 
   def undo_move(move, piece)
     undo([8 - move.from_rank, move.from_file - 1],
       [8 - move.to_rank, move.to_file - 1], piece.code)
 
-    update_fen(false)
+    update_fen(move, false)
   end
 
   def to_s(dark_background = true)
@@ -241,14 +241,36 @@ class ChessRB::Position
     @board[to[0]][to[1]] = code
   end
 
-  def update_fen(forward)
-    @fen_components[1] = @fen_components[1] == 'w' ? 'b' : 'w'
-    @fen_components[0] = board_to_fen()
+  def update_fen(move, forward)
     if forward
-      # do things for make_move
+      sym = nil
+      if move.king_castle?
+        sym = @fen_components[1] == 'w' ? 'K' : 'k'
+        if @fen_components[2].include? sym
+          @fen_components[2].sub(sym, '')
+        end
+      elsif move.queen_castle?
+        sym = @fen_components[1] == 'w' ? 'Q' : 'q'
+        @fen_components[2]
+      end
+      if sym && @fen_components[2].include? sym
+        @fen_components[2].sub(sym, '')
+        @fen_components[2] = '-' if @fen_components[2].empty?
+      end
+
+      if piece_on(move.to).type == 'P' &&
+        (move.from_rank - move.to_rank).abs == 2
+
+        @fen_components[3]
+      else
+        @fen_components[3] = '-'
+      end
     else
       # do things for undo_move
     end
+    @fen_components[0] = board_to_fen()
+    @fen_components[1] = @fen_components[1] == 'w' ? 'b' : 'w'
+
     @fen = @fen_components.join(' ')
   end
 end
