@@ -153,14 +153,14 @@ class ChessRB::Position
     move([8 - move.from_rank, move.from_file - 1],
       [8 - move.to_rank, move.to_file - 1])
 
-    @fen_components[1] = @fen_components[1] == 'w' ? 'b' : 'w'
+    update_fen(true)
   end
 
   def undo_move(move, piece)
     undo([8 - move.from_rank, move.from_file - 1],
       [8 - move.to_rank, move.to_file - 1], piece.code)
 
-    @fen_components[1] = @fen_components[1] == 'w' ? 'b' : 'w'
+    update_fen(false)
   end
 
   def to_s(dark_background = true)
@@ -204,6 +204,33 @@ class ChessRB::Position
     return board
   end
 
+  def board_to_fen
+    fen = ""
+
+    @board.each_with_index do |r, i|
+      fen += '/' if i != 0
+      count = 0
+      r.each_with_index do |c|
+        p = ChessRB::Piece.new(c)
+        if p.empty?
+          count += 1
+        else
+          fen += count.to_s if count != 0
+          count = 0
+          if p.color == 'W'
+            fen += p.type.upcase
+          else
+            fen += p.type.downcase
+          end
+        end
+      end
+      fen += count.to_s if count != 0
+    end
+
+    puts fen.to_s
+    return fen
+  end
+
   def move(from, to)
     @board[to[0]][to[1]] = @board[from[0]][from[1]]
     @board[from[0]][from[1]] = 0
@@ -212,5 +239,16 @@ class ChessRB::Position
   def undo(from, to, code)
     @board[from[0]][from[1]] = @board[to[0]][to[1]]
     @board[to[0]][to[1]] = code
+  end
+
+  def update_fen(forward)
+    @fen_components[1] = @fen_components[1] == 'w' ? 'b' : 'w'
+    @fen_components[0] = board_to_fen()
+    if forward
+      # do things for make_move
+    else
+      # do things for undo_move
+    end
+    @fen = @fen_components.join(' ')
   end
 end

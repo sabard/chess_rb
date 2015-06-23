@@ -19,6 +19,10 @@ class ChessRB::Piece
     self.desc[0]
   end
 
+  def empty?
+    return @code == 0
+  end
+
   def to_s(d)
     case @code
     when WP
