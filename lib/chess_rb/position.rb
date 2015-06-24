@@ -38,13 +38,16 @@ class ChessRB::Position
     end
   end
 
-  def squares_with(piece)
+  def squares_with(pieces)
     squares = []
-    code = ChessRB::Piece.const_get(piece)
+    codes = []
+    pieces.each do |piece|
+      codes << ChessRB::Piece.const_get(piece)
+    end
 
     @board.each_with_index do |r , i|
       r.each_with_index do |p, j|
-        if p == code
+        if codes.include?(p)
           squares << [i, j]
         end
       end
@@ -59,7 +62,7 @@ class ChessRB::Position
 
     t = turn().upcase
     not_t = t == 'W' ? 'B' : 'W'
-    king_vector = Vector[*(squares_with(t + 'K')[0])]
+    king_vector = Vector[*(squares_with([t + 'K'])[0])]
 
     # check pawn squares
     pawn_vectors = t == 'W' ? [[-1, -1], [1, -1]] : [[-1, 1], [1, 1]]
@@ -124,7 +127,7 @@ class ChessRB::Position
     return false if !check?
 
     t = turn().upcase
-    king_vector = Vector[*(squares_with(t + 'K')[0])]
+    king_vector = Vector[*(squares_with([t + 'K'])[0])]
 
     around_vectors = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, 1],
       [1, -1], [-1, -1]]

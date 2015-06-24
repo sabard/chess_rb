@@ -35,12 +35,14 @@ class ChessRB::Notation
 
     san += "=#{move.promotion}" if move.promotion
 
-    undo_info = board.piece_on(move.to)
-    board.make_move(move)
-    if (board.check?)
-      san += board.mate? ? "#" : "+"
+    if !board.squares_with(['WK', 'BK']).empty?
+      undo_info = board.piece_on(move.to)
+      board.make_move(move)
+      if (board.check?)
+        san += board.mate? ? "#" : "+"
+      end
+      board.undo_move(move, undo_info)
     end
-    board.undo_move(move, undo_info)
 
     return san
   end
