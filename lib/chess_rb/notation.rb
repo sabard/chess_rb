@@ -35,7 +35,7 @@ class ChessRB::Notation
 
     san += "=#{move.promotion}" if move.promotion
 
-    if !board.squares_with(['WK', 'BK']).empty?
+    if !board.squares_with(['WK']).empty? && !board.squares_with(['BK']).empty?
       undo_info = board.piece_on(move.to)
       board.make_move(move)
       if (board.check?)

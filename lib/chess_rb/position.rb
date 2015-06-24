@@ -264,7 +264,7 @@ class ChessRB::Position
       if (pawn_move = piece_on(move.to).type == 'P') &&
         (move.from_rank - move.to_rank).abs == 2
 
-        @fen_components[3] = move.san[0]
+        @fen_components[3] = move.square[0]
         @fen_components[3] += (t == 'w') ? '3' : '6'
       else
         @fen_components[3] = '-'
